@@ -26,12 +26,24 @@
             overflow: hidden;
             font-family: "Trebuchet MS";
         }
+        .yellow {
+            color:#FFFF00 !important;
+        }
+        .myHeader{
+            padding: 8px;
+            font-size: medium !important;
+            color: white;
+            background-color: #000000;
+        }
         .panel {
-            height: 200px;
+            padding: 8px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            height: 225px;
             width: 200px;
             background-color: #000000;
             color: #ffffff;
-            font-size: small !important;
+            font-size: medium !important;
             border-style: solid;
             border-color: #000000;
             border-width: 2px;
@@ -58,9 +70,9 @@
             });
 
             document.getElementById("panel").innerHTML =
-                    "Median Income: <br> $0.00" + "<hr><br>" +
-                            "Average Retail Spending: <br> $0.00"  + "<hr><br>" +
-                            "Total Population: <br> 0";
+                    "<br>Median Income: <br> <div class='yellow'>$0.00</div> " + "<hr><br>" +
+                            "Average Retail Spending: <br> <div class='yellow'>$0.0</div>"  + "<hr><br>" +
+                            "Total Population: <br> <div class='yellow'>0</div>";
 
             var queryTask =
                     new QueryTask("http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Retail_Spending_Potential/MapServer/1");
@@ -115,9 +127,9 @@
                     }
 
                     document.getElementById("panel").innerHTML =
-                        "Median Income: <br>$" + (medianIncome/fsLength).toFixed(0) + "<hr><br>" +
-                        "Average Retail Spending: <br>$" + (averageRetailSpend/fsLength).toFixed(0) + "<hr><br>" +
-                        "Total Population: " + totalPopulation;
+                        "<br>Median Income: <br><div class='yellow'>$" + (medianIncome/fsLength).toFixed(0) + "</div><hr><br>" +
+                        "Average Retail Spending: <br><div class='yellow'>$" + (averageRetailSpend/fsLength).toFixed(0) + "</div><hr><br>" +
+                        "Total Population:<div class='yellow'>" + totalPopulation + "</div>";
                 }
             }
 
@@ -157,12 +169,15 @@
                 //var d:Number = radius/R_KM;          //angular distance on earth's surface
                 var d = radius/R_MI;         //angular distance on earth's surface
 
-                //var nodes = 100; //number of nodes in circle
-                //var step = 360/nodes||10;
+                //Reduce the number of points in the polygon that we create
+                //Fewer points means a smaller payload to send back and forth
+                //when making REST requests to ArcGIS Server/ArcGIS Online
+                var nodes = 50; //number of nodes in circle
+                var step = 360/nodes||10;
                 var ptArray = [];
                 var n = 0;
 
-                for(var x = 0; x <= 360; x++)
+                for(var x = 0; x < 360; x+=step)
                 {
                     var bearing = degToRad(x);
                     var lat2 = Math.asin(
@@ -176,16 +191,18 @@
 
                     if(returnMercator)
                     {
-                        ptArray[x] = esri.geometry.geographicToWebMercator(
+                        ptArray[n] = esri.geometry.geographicToWebMercator(
                                 new esri.geometry.Point(radToDeg(lon2), radToDeg(lat2), map.spatialReference)
                         );
                     }
                     else
                     {
-                        ptArray[x] = new esri.geometry.Point(radToDeg(lon2), radToDeg(lat2), new esri.SpatialReference({
+                        ptArray[n] = new esri.geometry.Point(radToDeg(lon2), radToDeg(lat2), new esri.SpatialReference({
                             wkid: 4326
                         }));
                     }
+
+                    n++;
                 }
 
                 //add first point to the end of array to close the polygon
@@ -207,6 +224,7 @@
 </head>
 
 <body>
+<div class="myHeader" id="myHeader">Click on map to get demographics information</div>
 <div id="map"></div>
 <div class="panel" id="panel"></div>
 </body>
