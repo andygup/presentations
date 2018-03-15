@@ -26,7 +26,8 @@
             opacity: 0.75;
         }
     </style>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.7/esri/css/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
+
     <script>
       var dojoConfig = {
         has: {
@@ -34,7 +35,8 @@
         }
       };
     </script>
-    <script src="https://js.arcgis.com/4.7"></script>
+
+    <script src="https://js.arcgis.com/4.6"></script>
 
     <script>
       require([
@@ -97,15 +99,13 @@
         on(dom.byId("startBtn"), "click", function() {
           // Buffer crater point and chain promise to additional functions
           geometryEngineAsync.geodesicBuffer(meteorPoint, 700, "yards")
-              .then(addGraphics)
-              .then(zoomTo)
-              .then(calculateArea)
+              .then(addGraphics) // When geodesicBuffer() resolves, send buffer to addGraphics()
+              .then(zoomTo) // When addGraphics() resolves, send response to zoomTo()
+              .then(calculateArea) // When zoomTo() resolves, send response to calculateArea()
               .then(printArea)
-
-              // comment this out to show error fails silently
-              .otherwise(function(error){
-                console.error('One of the promises in the chain was rejected! Message: ', error);
-              });
+              // .otherwise(function(error){
+              //   console.log("informative error message: ", error);
+              // }); // Syntax error in geodesicAreas should be geodesicArea singular
         });
 
         // Adds the point and buffer graphics to the layer
@@ -125,9 +125,9 @@
         // Zooms to the buffer location
         function zoomTo(geom) {
           // When the view is ready
-          view.when(function() {
+          return view.when(function() {
             // Zoom to the buffer geometry
-            view.goTo({
+            return view.goTo({
               target: geom,
               scale: 24000,
               tilt: 0,
@@ -141,7 +141,7 @@
 
         // Calculates the area of the buffer in acres
         function calculateArea(polyGeom) {
-          return geometryEngineAsync.geodesicArea(polyGeom, "acres");
+          return geometryEngineAsync.geodesicAreas(polyGeom, "acres");
         }
 
         // Prints the area to the DOM
