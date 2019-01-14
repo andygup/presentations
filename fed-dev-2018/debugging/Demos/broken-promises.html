@@ -103,9 +103,9 @@
               .then(zoomTo) // When addGraphics() resolves, send response to zoomTo()
               .then(calculateArea) // When zoomTo() resolves, send response to calculateArea()
               .then(printArea)
-              // .otherwise(function(error){
-              //   console.log("informative error message: ", error);
-              // }); // Syntax error in geodesicAreas should be geodesicArea singular
+              .otherwise(function(error){
+                console.log("informative error message: ", error);
+              }); // Syntax error in geodesicAreas should be geodesicArea singular
         });
 
         // Adds the point and buffer graphics to the layer
@@ -141,7 +141,7 @@
 
         // Calculates the area of the buffer in acres
         function calculateArea(polyGeom) {
-          return geometryEngineAsync.geodesicAreas(polyGeom, "acres");
+          return geometryEngineAsync.geodesicArea(polyGeom, "acres");
         }
 
         // Prints the area to the DOM
