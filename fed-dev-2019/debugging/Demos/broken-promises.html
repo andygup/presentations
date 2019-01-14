@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Chaining Promises - 4.6</title>
+    <title>Chaining Promises - 4.10</title>
 
     <style>
         html,
@@ -26,17 +26,9 @@
             opacity: 0.75;
         }
     </style>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
 
-    <script>
-      var dojoConfig = {
-        has: {
-          "esri-promise-compatibility": 1
-        }
-      };
-    </script>
-
-    <script src="https://js.arcgis.com/4.6"></script>
+    <script src="https://js.arcgis.com/4.10"></script>
 
     <script>
       require([
@@ -141,7 +133,7 @@
 
         // Calculates the area of the buffer in acres
         function calculateArea(polyGeom) {
-          return geometryEngineAsync.geodesicArea(polyGeom, "acres");
+          return geometryEngineAsync.geodesicAreas(polyGeom, "acres");
         }
 
         // Prints the area to the DOM
